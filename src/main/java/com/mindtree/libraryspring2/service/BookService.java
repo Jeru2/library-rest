@@ -90,7 +90,6 @@ public class BookService
 	
 	public List<Book> getAllBooks()
 	{
-		bookRepo.findAll().forEach((bk) -> System.out.println(bk));
 		return bookRepo.findAll();		
 	}
 	
