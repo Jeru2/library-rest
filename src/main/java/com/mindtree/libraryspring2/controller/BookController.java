@@ -51,7 +51,6 @@ public class BookController
 	@GetMapping("/author/{authorName}")
 	public List<Book> getBookByAuthor(@PathVariable String authorName)
 	{
-		System.out.println("Hello BookController "+authorName);
 		return bookServ.getBookByAuthor(authorName);
 	}
 }

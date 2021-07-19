@@ -1,7 +1,7 @@
 package com.mindtree.libraryspring2.entity;
 
-import java.util.ArrayList;
-import java.util.List;
+import java.util.HashMap;
+import java.util.Map;
 
 import javax.persistence.CascadeType;
 import javax.persistence.Column;
@@ -11,6 +11,7 @@ import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.ManyToMany;
+import javax.persistence.MapKey;
 import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
 
@@ -31,12 +32,13 @@ public class Author
 	
 	@JsonIgnore
 	@ManyToMany(fetch = FetchType.EAGER, cascade = {CascadeType.MERGE, CascadeType.PERSIST, CascadeType.REFRESH}, mappedBy = "authors")
-	private List<Book> books;
+	@MapKey(name = "name")
+	private Map<String, Book> books;
 
 	public Author()
 	{
 		super();
-		this.books = new ArrayList<Book>();
+		books = new HashMap<String, Book>();		
 	}
 
 	public Author(String name, String birthYear)
@@ -46,7 +48,7 @@ public class Author
 		this.birthYear = birthYear;
 	}
 	
-	public Author(String name, String birthYear, List<Book> books)
+	public Author(String name, String birthYear, Map<String, Book> books)
 	{
 		super();
 		this.name = name;
@@ -84,12 +86,12 @@ public class Author
 		this.birthYear = birthYear;
 	}
 
-	public List<Book> getBooks()
+	public Map<String, Book> getBooks()
 	{
 		return books;
 	}
 
-	public void setBooks(List<Book> books)
+	public void setBooks(Map<String, Book> books)
 	{
 		this.books = books;
 	}

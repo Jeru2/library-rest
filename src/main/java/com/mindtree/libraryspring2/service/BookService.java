@@ -57,7 +57,7 @@ public class BookService
 			}
 		}
 		book.setAuthors(currentBookAuthors);
-		book.getAuthors().forEach(BookLambdaWrapper((bk) -> bk.getBooks().add(book)));
+		book.getAuthors().forEach(BookLambdaWrapper((bk) -> bk.getBooks().put(bk.getName(), book)));
 		bookRepo.save(book);
 	}
 	/*
@@ -90,7 +90,6 @@ public class BookService
 	
 	public List<Book> getAllBooks()
 	{
-		bookRepo.findAll().forEach((bk) -> System.out.println(bk));
 		return bookRepo.findAll();		
 	}
 	

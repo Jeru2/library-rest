@@ -16,7 +16,7 @@ public class AuthorService
 	
 	public List<Author> getAllAuthors()
 	{
-		authorRepo.findAll().forEach(author -> System.out.println(author));
+		authorRepo.findAll().forEach(author -> System.out.println("Map: "+author.getBooks()));
 		return authorRepo.findAll();
 	}
 	
