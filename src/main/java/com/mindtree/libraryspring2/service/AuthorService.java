@@ -6,6 +6,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import com.mindtree.libraryspring2.entity.Author;
+import com.mindtree.libraryspring2.exception.BookNotFoundException;
+import com.mindtree.libraryspring2.exception.LibraryServiceException;
 import com.mindtree.libraryspring2.repository.AuthorRepository;
 
 @Service
@@ -16,7 +18,6 @@ public class AuthorService
 	
 	public List<Author> getAllAuthors()
 	{
-		authorRepo.findAll().forEach(author -> System.out.println("Map: "+author.getBooks()));
 		return authorRepo.findAll();
 	}
 	
@@ -25,9 +26,17 @@ public class AuthorService
 		return authorRepo.findById(id).orElse(null);
 	}	
 	
-	public List<Author> getAuthorByBook(String bookName)
+	public List<Author> getAuthorByBook(String bookName) throws LibraryServiceException
 	{		
-		return authorRepo.findAllByBooks_name(bookName);
+		List<Author> listBook = authorRepo.findAllByBooks_name(bookName);
+		if(listBook.isEmpty())
+		{
+			throw new BookNotFoundException("Book couldn't be found in records");
+		}
+		else
+		{
+			return listBook;
+		}
 	}
 	
 }

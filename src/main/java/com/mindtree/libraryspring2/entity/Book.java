@@ -14,6 +14,9 @@ import javax.persistence.JoinTable;
 import javax.persistence.ManyToMany;
 import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
+import javax.validation.constraints.NotBlank;
+import javax.validation.constraints.NotEmpty;
+import javax.validation.constraints.NotNull;
 
 @Entity
 @Table(name = "library_books")
@@ -27,10 +30,13 @@ public class Book
 	@Column
 	private String name;
 	@Column
+	@NotNull(message = "Cannot be null")
 	private int rating;
 	@Column
+	@NotBlank(message = "Cannot be blank")
 	private String language;
 	@Column
+	@NotEmpty(message = "Cannot be empty")
 	private String category;
 	@Column
 	private int copies;
@@ -149,9 +155,7 @@ public class Book
 	{
 		final int prime = 31;
 		int result = 1;
-		result = prime * result + ((authors == null) ? 0 : authors.hashCode());
 		result = prime * result + ((category == null) ? 0 : category.hashCode());
-		result = prime * result + copies;
 		result = prime * result + ((language == null) ? 0 : language.hashCode());
 		result = prime * result + ((name == null) ? 0 : name.hashCode());
 		result = prime * result + rating;
@@ -168,19 +172,12 @@ public class Book
 		if (getClass() != obj.getClass())
 			return false;
 		Book other = (Book) obj;
-		if (authors == null)
-		{
-			if (other.authors != null)
-				return false;
-		} else if (!authors.equals(other.authors))
-			return false;
+		
 		if (category == null)
 		{
 			if (other.category != null)
 				return false;
 		} else if (!category.equals(other.category))
-			return false;
-		if (copies != other.copies)
 			return false;
 		if (language == null)
 		{

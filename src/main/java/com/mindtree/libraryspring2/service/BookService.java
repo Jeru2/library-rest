@@ -1,6 +1,5 @@
 package com.mindtree.libraryspring2.service;
 
-import java.io.IOException;
 import java.util.Iterator;
 import java.util.List;
 import java.util.function.Consumer;
@@ -10,6 +9,8 @@ import org.springframework.stereotype.Service;
 
 import com.mindtree.libraryspring2.entity.Author;
 import com.mindtree.libraryspring2.entity.Book;
+import com.mindtree.libraryspring2.exception.DuplicateInsertionException;
+import com.mindtree.libraryspring2.exception.LibraryServiceException;
 import com.mindtree.libraryspring2.repository.AuthorRepository;
 import com.mindtree.libraryspring2.repository.BookRepository;
 
@@ -37,8 +38,38 @@ public class BookService
 	    };
 	}
 	
-	public void addBook(Book book) throws IOException
+	@FunctionalInterface
+	interface DuplicateChecker
 	{
+		   void check(Book book1, Book book2) throws DuplicateInsertionException;
+	}
+	
+	public void addBook(Book book) throws LibraryServiceException
+	{
+		List<Book> existingBooks = bookRepo.findAll();
+		
+		DuplicateChecker dupChecker = (book1, book2) ->	{
+			if(book1.equals(book2))
+			{
+				throw new DuplicateInsertionException("Attempting to insert duplicate records");
+			}
+		};
+		for(Book currentExistingBook : existingBooks)
+		{
+			dupChecker.check(currentExistingBook, book);
+		}		
+		
+		/*
+		List<Book> existingBooks = bookRepo.findAll();
+		for(Book currentExistingBook : existingBooks)
+		{
+			if(currentExistingBook.equals(book))
+			{
+				throw new DuplicateInsertionException("Attempting to insert duplicate records");
+			}
+		}
+		*/
+		
 		List<Author> currentBookAuthors = book.getAuthors();
 		List<Author> databaseAuthors = authorRepo.findAll();
 		
@@ -60,33 +91,6 @@ public class BookService
 		book.getAuthors().forEach(BookLambdaWrapper((bk) -> bk.getBooks().put(bk.getName(), book)));
 		bookRepo.save(book);
 	}
-	/*
-	public void addBooks(List<Book> books)
-	{
-		//boolean present = false;
-		List<Author> db = authorRepo.findAll();
-		for(Book b : books)
-		{
-			List<Author> ath = b.getAuthors();
-			for(Author a : ath)
-			{			
-				System.out.println("\n"+a);
-				for(Author d : db)
-				{
-					System.out.println("\t for "+a+" d = "+d);
-					if(a.equals(d))
-					{
-						System.out.println("Matched");
-					}
-				}
-			}
-		}
-		
-		bookRepo.saveAll(books);
-
-		System.out.println(bookRepo.findAll());
-	}
-	*/
 	
 	public List<Book> getAllBooks()
 	{

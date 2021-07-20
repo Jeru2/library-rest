@@ -1,7 +1,8 @@
 package com.mindtree.libraryspring2.controller;
 
-import java.io.IOException;
 import java.util.List;
+
+import javax.validation.Valid;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -12,6 +13,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.mindtree.libraryspring2.entity.Book;
+import com.mindtree.libraryspring2.exception.LibrarySpringException;
 import com.mindtree.libraryspring2.service.BookService;
 
 @RestController
@@ -21,20 +23,12 @@ public class BookController
 
 	@Autowired
 	BookService bookServ;
-
+	
 	@PostMapping("/addBook")
-	public void addBook(@RequestBody Book book) throws IOException
+	public void addBook(@Valid @RequestBody Book book) throws LibrarySpringException
 	{
 		bookServ.addBook(book);
 	}
-
-	/*
-	@PostMapping("/addBooks")
-	public void addBooks(@RequestBody List<Book> books)
-	{
-		bookServ.addBooks(books);
-	}
-	*/
 
 	@GetMapping("/books")
 	public List<Book> getAllBooks()
