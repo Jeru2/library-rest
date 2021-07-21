@@ -1,8 +1,14 @@
 package com.mindtree.libraryspring2.service;
 
+import java.util.ArrayList;
+import java.util.Collections;
 import java.util.Iterator;
 import java.util.List;
+import java.util.TreeMap;
+import java.util.TreeSet;
 import java.util.function.Consumer;
+import java.util.stream.Collectors;
+import java.util.Comparator;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -13,16 +19,30 @@ import com.mindtree.libraryspring2.exception.DuplicateInsertionException;
 import com.mindtree.libraryspring2.exception.LibraryServiceException;
 import com.mindtree.libraryspring2.repository.AuthorRepository;
 import com.mindtree.libraryspring2.repository.BookRepository;
+import com.mindtree.libraryspring2.service.misc.ComparableExample;
+
 
 @Service
 public class BookService
 {
+	//defining our comparator which allows sorting using Collections.sort
+
+	public static Comparator<Book> sortByCopies = new Comparator<Book>() 
+	{
+		public int compare(Book book1, Book book2) 
+		{
+		   int copies1 = book1.getCopies();
+		   int copies2 = book2.getCopies();
+		   return Integer.compare(copies1, copies2);		   
+	    }
+	};
 	@Autowired
 	public BookRepository bookRepo;
 	
 	@Autowired
 	public AuthorRepository authorRepo;
 	
+	//Using java functional interface Consumer which takes single input and returns nothing
 	static Consumer<Author> BookLambdaWrapper(Consumer<Author> bookLambda) 
 	{
 	    return input -> 
@@ -38,16 +58,61 @@ public class BookService
 	    };
 	}
 	
+	//defining custom functional interface to throw exception from lambda expression and demonstrate
+	//static and default methods
+	
 	@FunctionalInterface
 	interface DuplicateChecker
 	{
-		   void check(Book book1, Book book2) throws DuplicateInsertionException;
+		  void check(Book book1, Book book2) throws DuplicateInsertionException;
+		  
+		  /*
+		  default void sampleDefaultMethod()
+		  {
+			  System.out.println("Default method invoked!");
+		  }
+		  static void sampleStaticMethod()
+		  {
+			  System.out.println("Static method invoked");
+		  }
+		  class SampleClass implements DuplicateChecker
+		  {
+			  public void sampleClassMethod()
+			  {				  
+				  DuplicateChecker dpChecker;
+				  dpChecker.sampleDefaultMethod();				//Can be called using the instance of interface
+				  SampleClass smpClass = new SampleClass();		
+				  smpClass.sampleDefaultMethod();				//Can be called using the instance of the class
+				  
+				  DuplicateChecker.sampleStaticMethod();		//Can only be called directly by interface name		
+			  }
+			  
+			  @Override
+			  public void sampleDefaultMethod()					//Can override to provide implementation				
+			  {
+				  
+			  }
+			  
+			  @Override
+			  public void sampleStaticMethod()					//Forbidden to override
+			  {
+				  
+			  }
+
+			@Override
+			public void check(Book book1, Book book2) throws DuplicateInsertionException
+			{				
+			}
+		  }
+		  */
+		  
 	}
 	
 	public void addBook(Book book) throws LibraryServiceException
 	{
 		List<Book> existingBooks = bookRepo.findAll();
 		
+		//Exception handling in lambda expression
 		DuplicateChecker dupChecker = (book1, book2) ->	{
 			if(book1.equals(book2))
 			{
@@ -73,6 +138,7 @@ public class BookService
 		List<Author> currentBookAuthors = book.getAuthors();
 		List<Author> databaseAuthors = authorRepo.findAll();
 		
+		//Checking if same author is present already and accordingly setting values
 		for(Iterator<Author> currentBookAuthorIterator = currentBookAuthors.iterator(); currentBookAuthorIterator.hasNext();)
 		{            
 			Author currAuthor = currentBookAuthorIterator.next(); 
@@ -88,13 +154,94 @@ public class BookService
 			}
 		}
 		book.setAuthors(currentBookAuthors);
+		//Exception handling in lambda expression
 		book.getAuthors().forEach(BookLambdaWrapper((bk) -> bk.getBooks().put(bk.getName(), book)));
 		bookRepo.save(book);
 	}
 	
 	public List<Book> getAllBooks()
 	{
-		return bookRepo.findAll();		
+		List<String> names = new ArrayList<String>();
+		List<Book> allBooks = bookRepo.findAll();
+		allBooks.forEach(book -> names.add(book.getName()));
+		
+		//displaying book titles in descending order using treeset
+		
+		TreeSet<String> nameSet = new TreeSet<String>();
+		nameSet.addAll(names);
+		System.out.println("\nBook titles in descending order using treeset:");
+		System.out.println(nameSet.descendingSet());
+		
+		TreeMap<Integer, List<String>> ratingMap = new TreeMap<Integer, List<String>>();
+		for(Book currentBook : allBooks)
+		{
+			if(ratingMap.containsKey(currentBook.getRating()))
+			{
+				ratingMap.get(currentBook.getRating()).add(currentBook.getName());
+			}
+			else
+			{
+				List<String> currList = new ArrayList<String>();
+				currList.add(currentBook.getName());
+				ratingMap.put(currentBook.getRating(), currList);
+			}
+		}
+		
+		//displaying ratings of titles arranged using treemap
+		
+		System.out.println("\nRatings of titles arranged using treemap");
+		System.out.println(ratingMap.descendingMap());
+		
+		
+		List<Book> booksSortedByCopies = allBooks.stream().collect(Collectors.toList());
+		Collections.sort(booksSortedByCopies, sortByCopies);
+		
+		//displaying books sorted by copies using comparator
+		
+		System.out.println("\nBooks sorted by copies using comparator:");
+		System.out.println(booksSortedByCopies);
+		
+		List<ComparableExample> booksSortedByRating = new ArrayList<ComparableExample>();
+		for(Book currBook : allBooks)
+		{
+			ComparableExample newExample = new ComparableExample(currBook.getRating(), currBook.getName());
+			booksSortedByRating.add(newExample);
+		}
+		
+		//displaying books sorted by rating using comparable
+		
+		Collections.sort(booksSortedByRating);
+		System.out.println("\nBooks sorted by rating using comparable:");
+		System.out.println(booksSortedByRating);
+		
+		//Adding copies to books using Stream map()
+		
+		System.out.println("\nAdding copies to books using Stream map()");
+		List<Book> bookList1 = allBooks.stream().collect(Collectors.toList());
+		int copiesToBeAdded = 15;
+		bookList1.stream().map(book -> {
+		book.setCopies(book.getCopies()+copiesToBeAdded);
+		return book;
+		}).forEach(modifiedBook -> System.out.println(modifiedBook));
+		
+		//Filtering books with category containing \'fiction\' using Stream filter()
+		
+		System.out.println("\nFiltering books with category containing \'fiction\' using Stream filter()");
+		List<Book> bookList2 = allBooks.stream().collect(Collectors.toList());
+		bookList2.stream().map(book -> {
+		book.setCategory(book.getCategory().toLowerCase());
+		return book;
+		}).filter(modifiedBook -> modifiedBook.getCategory().contains("fiction")).forEach(filteredBook -> System.out.println(filteredBook));
+		
+		//Listing all titles with ratings in a concise manner using Stream reduce()
+		
+		System.out.println("\nListing all titles with ratings in a concise manner using Stream reduce()");
+		List<Book> bookList3 = allBooks.stream().collect(Collectors.toList());
+		String reduceResult = bookList3.stream().reduce("", (cumulativeResult,
+				newBook) -> cumulativeResult+""+newBook.getName()+" ("+newBook.getRating()+")\n",
+				(book1, book2) -> book1+""+book2);
+		System.out.println(reduceResult);
+		return allBooks;		
 	}
 	
 	public Book getBookById(int id)

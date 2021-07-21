@@ -27,24 +27,28 @@ public class BookController
 	@PostMapping("/addBook")
 	public void addBook(@Valid @RequestBody Book book) throws LibrarySpringException
 	{
+		//adding book to records
 		bookServ.addBook(book);
 	}
 
 	@GetMapping("/books")
 	public List<Book> getAllBooks()
 	{
+		//returning all books
 		return bookServ.getAllBooks();
 	}
 
 	@GetMapping("/id/{id}")
 	public Book getBookById(@PathVariable int id)
 	{
+		//returning book with specified id
 		return bookServ.getBookById(id);
 	}
 
 	@GetMapping("/author/{authorName}")
 	public List<Book> getBookByAuthor(@PathVariable String authorName)
 	{
+		//returning books by specified author
 		return bookServ.getBookByAuthor(authorName);
 	}
 }

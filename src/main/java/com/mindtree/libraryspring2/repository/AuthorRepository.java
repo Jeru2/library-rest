@@ -10,7 +10,7 @@ import com.mindtree.libraryspring2.entity.Author;
 @Repository
 public interface AuthorRepository extends JpaRepository<Author, Integer>
 {
-
+	//finds all authors which have written the book <bookName>
 	List<Author> findAllByBooks_name(String bookName);
 
 }

@@ -31,6 +31,7 @@ public class AuthorService
 		List<Author> listBook = authorRepo.findAllByBooks_name(bookName);
 		if(listBook.isEmpty())
 		{
+			//if there are no results, an exception is thrown to inform that there are no matching entries for the book
 			throw new BookNotFoundException("Book couldn't be found in records");
 		}
 		else

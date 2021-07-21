@@ -21,18 +21,21 @@ public class AuthorController
 	@GetMapping("/authors")
 	public List<Author> getAllAuthors()
 	{
+		//returning all authors
 		return authorServ.getAllAuthors();
 	}
 
 	@GetMapping("/id/{id}")
 	public Author getAuthorById(@PathVariable int id)
 	{
+		//returning author with specified id
 		return authorServ.getAuthorById(id);
 	}
 
 	@GetMapping("/book/{bookName}")
 	public List<Author> getAuthorByBook(@PathVariable String bookName) throws LibrarySpringException
 	{		
+		//returning authors for specified Book
 		return authorServ.getAuthorByBook(bookName);	
 	}
 }

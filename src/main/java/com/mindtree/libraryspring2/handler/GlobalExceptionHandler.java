@@ -12,6 +12,8 @@ import org.springframework.web.servlet.mvc.method.annotation.ResponseEntityExcep
 
 import com.mindtree.libraryspring2.exception.LibrarySpringException;
 
+//Global exception handling class which handles exceptions occurring in the application
+
 @RestControllerAdvice
 public class GlobalExceptionHandler extends ResponseEntityExceptionHandler
 {
@@ -27,7 +29,7 @@ public class GlobalExceptionHandler extends ResponseEntityExceptionHandler
 		response.put("error", true);
 		System.out.println("Handled an exception");
 		ex.printStackTrace();
-		return new ResponseEntity<Map<String, Object>>(response, HttpStatus.OK);
+		return new ResponseEntity<Map<String, Object>>(response, HttpStatus.OK);	//The response code is sent here
 	}	
 	
 }
