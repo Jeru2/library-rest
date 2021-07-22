@@ -43,7 +43,7 @@ public class BookService
 	public AuthorRepository authorRepo;
 	
 	//Using java functional interface Consumer which takes single input and returns nothing
-	static Consumer<Author> BookLambdaWrapper(Consumer<Author> bookLambda) 
+	static Consumer<Author> checkBookForException(Consumer<Author> bookLambda) 
 	{
 	    return input -> 
 	    {
@@ -155,7 +155,7 @@ public class BookService
 		}
 		book.setAuthors(currentBookAuthors);
 		//Exception handling in lambda expression
-		book.getAuthors().forEach(BookLambdaWrapper((bk) -> bk.getBooks().put(bk.getName(), book)));
+		book.getAuthors().forEach(checkBookForException((bk) -> bk.getBooks().put(bk.getName(), book)));
 		bookRepo.save(book);
 	}
 	
@@ -218,7 +218,7 @@ public class BookService
 		
 		System.out.println("\nAdding copies to books using Stream map()");
 		List<Book> bookList1 = allBooks.stream().collect(Collectors.toList());
-		int copiesToBeAdded = 15;
+		int copiesToBeAdded = 15;			//Amount of books to be added
 		bookList1.stream().map(book -> {
 		book.setCopies(book.getCopies()+copiesToBeAdded);
 		return book;
