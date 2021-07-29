@@ -14,16 +14,23 @@ import org.springframework.web.bind.annotation.RestController;
 
 import com.mindtree.libraryspring2.entity.Book;
 import com.mindtree.libraryspring2.exception.LibrarySpringException;
-import com.mindtree.libraryspring2.service.BookService;
+import com.mindtree.libraryspring2.service.serviceImpl.BookServiceImpl;
 
+/**
+ * @author GodrayzZ
+ * REST Controller for book
+ */
 @RestController
 @RequestMapping("/book")
 public class BookController
 {
 
 	@Autowired
-	BookService bookServ;
-	
+	BookServiceImpl bookServ;
+	/**
+	 * @param book - book to be added to the database
+	 * @throws LibrarySpringException
+	 */
 	@PostMapping("/addBook")
 	public void addBook(@Valid @RequestBody Book book) throws LibrarySpringException
 	{
@@ -31,6 +38,9 @@ public class BookController
 		bookServ.addBook(book);
 	}
 
+	/**
+	 * @return - List of all books
+	 */
 	@GetMapping("/books")
 	public List<Book> getAllBooks()
 	{
@@ -38,6 +48,10 @@ public class BookController
 		return bookServ.getAllBooks();
 	}
 
+	/**
+	 * @param id - id of book to be searched for
+	 * @return - Book with requested id
+	 */
 	@GetMapping("/id/{id}")
 	public Book getBookById(@PathVariable int id)
 	{
@@ -45,6 +59,10 @@ public class BookController
 		return bookServ.getBookById(id);
 	}
 
+	/**
+	 * @param authorName - Name of the author for whom all written book are to be returned
+	 * @return - List of book written by the requested author
+	 */
 	@GetMapping("/author/{authorName}")
 	public List<Book> getBookByAuthor(@PathVariable String authorName)
 	{

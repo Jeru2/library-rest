@@ -13,7 +13,7 @@ import org.springframework.web.bind.annotation.RestControllerAdvice;
 //displaying the error messages for respective fields to the user
 
 @RestControllerAdvice
-public class ErrorHandler
+public class ValidationHandler
 {
 	@ResponseStatus(HttpStatus.BAD_REQUEST)
 	@ExceptionHandler(MethodArgumentNotValidException.class)

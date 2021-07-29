@@ -37,9 +37,11 @@ public class ComparableExample implements Comparable<ComparableExample>
 		this.name = name;
 	}
 
-	//overriding the compareTo method defined in the Comparable interface to provide our implementation
-	//which decides how the sorting will be conducted when Collections.sort will be called
 	
+	
+	/**
+	 * Overriden compareTo Method defined by Comparable interface
+	 */
 	@Override
 	public int compareTo(ComparableExample book)
 	{

@@ -14,6 +14,7 @@ import javax.persistence.ManyToMany;
 import javax.persistence.MapKey;
 import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
+import javax.validation.constraints.NotBlank;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 
@@ -26,8 +27,10 @@ public class Author
 	@GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "seq")
 	private int id;
 	@Column
+	@NotBlank
 	private String name;
 	@Column
+	@NotBlank
 	private String birthYear;
 	
 	@JsonIgnore
