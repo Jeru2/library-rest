@@ -24,6 +24,8 @@ public class ValidationHandler
 	        String fieldName = ((FieldError) error).getField();
 	        String errorMessage = error.getDefaultMessage();
 	        errors.put(fieldName, errorMessage);
+	        errors.put("status", "BAD_REQUEST");
+	        errors.put("code", "400");
 	    });
 	    return errors;
 	}

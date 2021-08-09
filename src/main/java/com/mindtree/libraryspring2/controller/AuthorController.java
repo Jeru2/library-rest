@@ -1,8 +1,12 @@
 package com.mindtree.libraryspring2.controller;
 
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -25,11 +29,17 @@ public class AuthorController
 	/**
 	 * @return - List of all authors
 	 */
+	
 	@GetMapping("/authors")
-	public List<Author> getAllAuthors()
+	public ResponseEntity<Map<String, Object>> getAllAuthors()
 	{
 		//returning all authors
-		return authorServ.getAllAuthors();
+		List<Author> result = authorServ.getAllAuthors();
+		Map<String, Object> response = new HashMap<String, Object>();
+		response.put("status", HttpStatus.OK);
+		response.put("code", "200");
+		response.put("Response data", result);
+		return new ResponseEntity<Map<String, Object>>(response, HttpStatus.OK);
 	}
 
 	/**
@@ -38,10 +48,15 @@ public class AuthorController
 	 * @throws LibrarySpringException
 	 */
 	@GetMapping("/id/{id}")
-	public Author getAuthorById(@PathVariable int id) throws LibrarySpringException
+	public ResponseEntity<Map<String, Object>> getAuthorById(@PathVariable int id) throws LibrarySpringException
 	{
 		//returning author with specified id
-		return authorServ.getAuthorById(id);
+		Author result = authorServ.getAuthorById(id);
+		Map<String, Object> response = new HashMap<String, Object>();
+		response.put("status", HttpStatus.OK);
+		response.put("code", "200");
+		response.put("Response data", result);
+		return new ResponseEntity<Map<String, Object>>(response, HttpStatus.OK);
 	}
 
 	/**
@@ -50,9 +65,14 @@ public class AuthorController
 	 * @throws LibrarySpringException
 	 */
 	@GetMapping("/book/{bookName}")
-	public List<Author> getAuthorByBook(@PathVariable String bookName) throws LibrarySpringException
+	public ResponseEntity<Map<String, Object>> getAuthorByBook(@PathVariable String bookName) throws LibrarySpringException
 	{		
 		//returning authors for specified Book
-		return authorServ.getAuthorByBook(bookName);	
+		List<Author> result = authorServ.getAuthorByBook(bookName);	
+		Map<String, Object> response = new HashMap<String, Object>();
+		response.put("status", HttpStatus.OK);
+		response.put("code", "200");
+		response.put("Response data", result);
+		return new ResponseEntity<Map<String, Object>>(response, HttpStatus.OK);
 	}
 }

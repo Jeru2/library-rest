@@ -1,10 +1,14 @@
 package com.mindtree.libraryspring2.controller;
 
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import javax.validation.Valid;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -32,20 +36,30 @@ public class BookController
 	 * @throws LibrarySpringException
 	 */
 	@PostMapping("/addBook")
-	public void addBook(@Valid @RequestBody Book book) throws LibrarySpringException
+	public ResponseEntity<Map<String, Object>> addBook(@Valid @RequestBody Book book) throws LibrarySpringException
 	{
+		Map<String, Object> response = new HashMap<String, Object>();
+		response.put("status", HttpStatus.CREATED);
+		response.put("code", "201");
+		
 		//adding book to records
 		bookServ.addBook(book);
+		return new ResponseEntity<Map<String, Object>>(response, HttpStatus.CREATED);
 	}
 
 	/**
 	 * @return - List of all books
 	 */
 	@GetMapping("/books")
-	public List<Book> getAllBooks()
+	public ResponseEntity<Map<String, Object>> getAllBooks()
 	{
 		//returning all books
-		return bookServ.getAllBooks();
+		List<Book> result = bookServ.getAllBooks();
+		Map<String, Object> response = new HashMap<String, Object>();
+		response.put("status", HttpStatus.OK);
+		response.put("code", "200");
+		response.put("Response data", result);
+		return new ResponseEntity<Map<String, Object>>(response, HttpStatus.OK);
 	}
 
 	/**
@@ -53,20 +67,30 @@ public class BookController
 	 * @return - Book with requested id
 	 */
 	@GetMapping("/id/{id}")
-	public Book getBookById(@PathVariable int id)
+	public ResponseEntity<Map<String, Object>> getBookById(@PathVariable int id)
 	{
 		//returning book with specified id
-		return bookServ.getBookById(id);
+		Book result = bookServ.getBookById(id);
+		Map<String, Object> response = new HashMap<String, Object>();
+		response.put("status", HttpStatus.OK);
+		response.put("code", "200");
+		response.put("Response data", result);
+		return new ResponseEntity<Map<String, Object>>(response, HttpStatus.OK);
 	}
 
 	/**
-	 * @param authorName - Name of the author for whom all written book are to be returned
+	 * @param authorName - Name of the author for whom all written books are to be returned
 	 * @return - List of book written by the requested author
 	 */
 	@GetMapping("/author/{authorName}")
-	public List<Book> getBookByAuthor(@PathVariable String authorName)
+	public ResponseEntity<Map<String, Object>> getBookByAuthor(@PathVariable String authorName)
 	{
 		//returning books by specified author
-		return bookServ.getBookByAuthor(authorName);
+		List<Book> result = bookServ.getBookByAuthor(authorName);
+		Map<String, Object> response = new HashMap<String, Object>();
+		response.put("status", HttpStatus.OK);
+		response.put("code", "200");
+		response.put("Response data", result);
+		return new ResponseEntity<Map<String, Object>>(response, HttpStatus.OK);
 	}
 }

@@ -47,7 +47,7 @@ public class AuthorServiceImpl implements AuthorService
 	@Override
 	public List<Author> getAuthorByBook(String bookName) throws LibraryServiceException
 	{		
-		List<Author> listBook = authorRepo.findAllByBooks_name(bookName);
+		List<Author> listBook = authorRepo.findAllByBooksname(bookName);
 		if(listBook.isEmpty())
 		{
 			//if there are no results, an exception is thrown to inform that there are no matching entries for the book
